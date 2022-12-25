@@ -19,12 +19,6 @@ class ProductController(private val productService: ProductService) {
         @PathVariable("sku") sku: String
     ): ResponseEntity<ProductResponse> {
         logger.info("Request for product $sku")
-
-        val product = productService.findProductBySku(sku)
-        return if(product == null) {
-            ResponseEntity.notFound().build()
-        } else {
-            ResponseEntity.ok(product)
-        }
+        return ResponseEntity.ok(productService.findProductBySku(sku))
     }
 }
