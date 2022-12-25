@@ -1,0 +1,2 @@
+ALTER TABLE products
+    ADD column stock DECIMAL UNSIGNED NOT NULL DEFAULT 0 ;

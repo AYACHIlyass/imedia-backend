@@ -30,5 +30,8 @@ data class ProductEntity(
 
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
-    val updatedAt: ZonedDateTime = ZonedDateTime.now()
+    val updatedAt: ZonedDateTime = ZonedDateTime.now(),
+
+    @Column(name = "stock", nullable = false)
+    val stock: BigDecimal = BigDecimal.ZERO,
 )
