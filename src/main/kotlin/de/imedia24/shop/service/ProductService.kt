@@ -1,8 +1,10 @@
 package de.imedia24.shop.service
 
 import de.imedia24.shop.db.repository.ProductRepository
+import de.imedia24.shop.domain.product.ProductRequest
 import de.imedia24.shop.domain.product.ProductResponse
 import de.imedia24.shop.domain.product.ProductResponse.Companion.toProductResponse
+import de.imedia24.shop.service.exceptions.ProductAlreadyExistException
 import de.imedia24.shop.service.exceptions.ProductNotFoundException
 import org.springframework.stereotype.Service
 
@@ -18,5 +20,14 @@ class ProductService(private val productRepository: ProductRepository) {
         return productRepository.findBySkus(skus.split(",")).takeIf { it.isNotEmpty() }
             ?.let { it.map { productEntity -> productEntity.toProductResponse() } }
             ?: throw ProductNotFoundException("the products with skus = $skus are not found")
+    }
+
+    fun addProduct(productRequest: ProductRequest): ProductResponse {
+        return takeIf { !productRepository.existsById(productRequest.sku) }?.let {
+            productRepository.save(
+                productRequest.toProductEntity()
+            ).toProductResponse()
+        }
+            ?: throw ProductAlreadyExistException(errorMessage = "the product with sku = ${productRequest.sku} already exist")
     }
 }

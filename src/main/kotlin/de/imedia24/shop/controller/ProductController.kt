@@ -1,11 +1,13 @@
 package de.imedia24.shop.controller
 
+import de.imedia24.shop.domain.product.ProductRequest
 import de.imedia24.shop.domain.product.ProductResponse
 import de.imedia24.shop.service.ProductService
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 import javax.validation.constraints.Pattern
 
 @RestController
@@ -31,5 +33,10 @@ class ProductController(private val productService: ProductService) {
     ): ResponseEntity<List<ProductResponse>> {
         logger.info("Request for products $skus")
         return ResponseEntity.ok(productService.findProductBySkus(skus))
+    }
+
+    @PostMapping(produces = ["application/json;charset=utf-8"])
+    fun addProduct(@Valid @RequestBody productRequest: ProductRequest): ResponseEntity<ProductResponse> {
+        return ResponseEntity.ok(productService.addProduct(productRequest))
     }
 }
