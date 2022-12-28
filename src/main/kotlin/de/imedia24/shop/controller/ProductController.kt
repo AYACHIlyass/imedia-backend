@@ -1,7 +1,8 @@
 package de.imedia24.shop.controller
 
-import de.imedia24.shop.domain.product.ProductRequest
-import de.imedia24.shop.domain.product.ProductResponse
+import de.imedia24.shop.domain.product.request.NewProductRequest
+import de.imedia24.shop.domain.product.request.ProductRequest
+import de.imedia24.shop.domain.product.response.ProductResponse
 import de.imedia24.shop.service.ProductService
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
@@ -36,7 +37,14 @@ class ProductController(private val productService: ProductService) {
     }
 
     @PostMapping(produces = ["application/json;charset=utf-8"])
-    fun addProduct(@Valid @RequestBody productRequest: ProductRequest): ResponseEntity<ProductResponse> {
-        return ResponseEntity.ok(productService.addProduct(productRequest))
+    fun addProduct(@Valid @RequestBody newProductRequest: NewProductRequest): ResponseEntity<ProductResponse> {
+        logger.info("add product $newProductRequest")
+        return ResponseEntity.ok(productService.addProduct(newProductRequest))
+    }
+
+    @PutMapping(produces = ["application/json;charset=utf-8"])
+    fun updateProduct(@Valid @RequestBody productRequest: ProductRequest): ResponseEntity<ProductResponse> {
+        logger.info("update product $productRequest")
+        return ResponseEntity.ok(productService.updateProduct(productRequest))
     }
 }

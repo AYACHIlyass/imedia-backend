@@ -1,4 +1,4 @@
-package de.imedia24.shop.domain.product
+package de.imedia24.shop.domain.product.response
 
 import de.imedia24.shop.db.entity.ProductEntity
 import java.math.BigDecimal

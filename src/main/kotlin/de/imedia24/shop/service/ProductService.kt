@@ -1,9 +1,10 @@
 package de.imedia24.shop.service
 
 import de.imedia24.shop.db.repository.ProductRepository
-import de.imedia24.shop.domain.product.ProductRequest
-import de.imedia24.shop.domain.product.ProductResponse
-import de.imedia24.shop.domain.product.ProductResponse.Companion.toProductResponse
+import de.imedia24.shop.domain.product.request.NewProductRequest
+import de.imedia24.shop.domain.product.request.ProductRequest
+import de.imedia24.shop.domain.product.response.ProductResponse
+import de.imedia24.shop.domain.product.response.ProductResponse.Companion.toProductResponse
 import de.imedia24.shop.service.exceptions.ProductAlreadyExistException
 import de.imedia24.shop.service.exceptions.ProductNotFoundException
 import org.springframework.stereotype.Service
@@ -22,12 +23,19 @@ class ProductService(private val productRepository: ProductRepository) {
             ?: throw ProductNotFoundException("the products with skus = $skus are not found")
     }
 
-    fun addProduct(productRequest: ProductRequest): ProductResponse {
-        return takeIf { !productRepository.existsById(productRequest.sku) }?.let {
+    fun addProduct(newProductRequest: NewProductRequest): ProductResponse {
+        return takeIf { !productRepository.existsById(newProductRequest.sku) }?.let {
             productRepository.save(
-                productRequest.toProductEntity()
+                newProductRequest.toProductEntity()
             ).toProductResponse()
         }
-            ?: throw ProductAlreadyExistException(errorMessage = "the product with sku = ${productRequest.sku} already exist")
+            ?: throw ProductAlreadyExistException(errorMessage = "the product with sku = ${newProductRequest.sku} already exist")
+    }
+
+    fun updateProduct(productRequest: ProductRequest): ProductResponse {
+        return takeIf { productRepository.existsById(productRequest.sku) }?.let {
+            productRepository.updateProduct(productRequest.toProductEntity())
+            productRepository.findBySku(productRequest.sku)!!.toProductResponse()
+        } ?: throw ProductNotFoundException("product with sku ${productRequest.sku} could not be found to update it")
     }
 }

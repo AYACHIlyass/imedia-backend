@@ -19,6 +19,11 @@ import javax.validation.ConstraintViolationException
 class ExceptionHandler : ResponseEntityExceptionHandler() {
     private val logger = LoggerFactory.getLogger(ExceptionHandler::class.java)!!
     private val validationErrorMessage = "Validation error"
+
+    @ExceptionHandler(Exception::class)
+    fun genericExceptionHandler(exception: Exception): ResponseEntity<Error> {
+        return createSimpleErrorResponseEntity(exception.message.toString(), HttpStatus.INTERNAL_SERVER_ERROR)
+    }
     @ExceptionHandler(ProductNotFoundException::class)
     fun productNotFoundExceptionHandler(productNotFoundException: ProductNotFoundException): ResponseEntity<Error> {
         return createSimpleErrorResponseEntity(productNotFoundException.errorMessage, HttpStatus.NOT_FOUND)
@@ -70,6 +75,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
             ), status
         )
     }
+
 
     private fun createSimpleErrorResponseEntity(message: String, status: HttpStatus): ResponseEntity<Error> {
         logger.error("error while calling an endpoint details: $message")
