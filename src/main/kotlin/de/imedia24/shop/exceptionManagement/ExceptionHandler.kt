@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import javax.validation.ConstraintViolationException
@@ -20,6 +21,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
     private val logger = LoggerFactory.getLogger(ExceptionHandler::class.java)!!
     private val validationErrorMessage = "Validation error"
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception::class)
     fun genericExceptionHandler(exception: Exception): ResponseEntity<Error> {
         return createSimpleErrorResponseEntity(exception.message.toString(), HttpStatus.INTERNAL_SERVER_ERROR)
@@ -28,7 +30,6 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
     fun productNotFoundExceptionHandler(productNotFoundException: ProductNotFoundException): ResponseEntity<Error> {
         return createSimpleErrorResponseEntity(productNotFoundException.errorMessage, HttpStatus.NOT_FOUND)
     }
-
     @ExceptionHandler(ConstraintViolationException::class)
     fun parameterIsNotValid(constraintViolationException: ConstraintViolationException): ResponseEntity<Error> {
         logger.error("a param is not valid ${constraintViolationException.message.toString()}")
