@@ -1,0 +1,21 @@
+variables:
+  IMAGE_OPENJDK_GRADLE: gradle:jdk8
+stages:
+  - build
+  - test
+create-build:
+  image: $IMAGE_OPENJDK_GRADLE
+  stage: build
+  script:
+    - echo "Compiling the code..."
+    - sh $CI_PROJECT_DIR/gradlew assemble
+  artifacts:
+    paths:
+      - build/libs/shop-*.jar
+    expire_in: 1 week
+unit-test:
+  image: $IMAGE_OPENJDK_GRADLE
+  stage: test
+  script:
+    - echo "Running unit tests..."
+    - sh $CI_PROJECT_DIR/gradlew test
